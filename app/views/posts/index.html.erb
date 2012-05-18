@@ -1,0 +1,81 @@
+<!-- Load widget code -->
+<script type="text/javascript" src="http://feather.aviary.com/js/feather.js"></script>
+
+
+<!-- Instantiate the widget -->
+<script type="text/javascript">
+
+    var featherEditor = new Aviary.Feather({
+        apiKey: 'e60ac2097',
+        apiVersion: 2,
+        tools: ['draw', 'stickers'],
+        onSave: function(imageID, newURL) {
+            var img = document.getElementById(imageID);
+            img.src = newURL;
+        },
+        postUrl: 'http://example.com/featherposturl'
+    });
+
+    function launchEditor(id, src) {
+        featherEditor.launch({
+            image: id,
+            url: src
+        });
+        return false;
+    }
+
+</script>                         
+
+
+
+
+
+
+
+
+
+
+
+<div class="content">
+<% @posts_with_photos.each do |post| %>
+<div class="post">
+	<!-- Add an edit button, passing the HTML id of the image
+	    and the public URL to the image -->
+	<a href="#" onclick="return launchEditor(<%= post['id'] %>, 
+	    <%= post["picture"].sub!("_s", "_n") %>);">Edit!</a>
+	<div class="photo">
+		<%= image_tag(post["picture"].sub!("_s", "_n"), :id => post["id"]).html_safe %>
+	</div>
+	<div class="friends">
+		<table>
+			
+			<tr>
+				<td class="profile_pic"><%= image_tag profile_pic_url(post["from"]["id"]) %></td>
+				<td class="poster">
+					<span class="name"><%= post["from"]["name"] %></span>
+					<span class="message"><%= post["message"] %></span>
+					<br/>
+					<span class="time"><%= time_ago_in_words(post["created_time"]) %> ago</span>
+				</td>
+			</tr>
+			
+			<% unless post["comments"]["count"] == 0 %>
+				<% post["comments"]["data"].each do |comment| %>
+					<tr>
+						<td class="profile_pic"><%= image_tag profile_pic_url(comment["from"]["id"]) %></td>
+						<td class="commenter">
+							<span class="name"><%= comment["from"]["name"] %></span>
+							<span class="message"><%= comment["message"] %></span>
+							<br/>
+							<span class="time"><%= time_ago_in_words(comment["created_time"]) %> ago</span>
+						</td>
+					</tr>
+				<% end %>
+			<% end %>
+			
+		</table>
+	</div>
+</div>
+
+<% end  %>
+</div>
